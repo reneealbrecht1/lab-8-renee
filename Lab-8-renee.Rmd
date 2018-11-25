@@ -9,3 +9,60 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+# Step 1 - Load in tidyverse and read in data
+
+library(tidyverse)
+salmon <- read_csv("salmon_imports.csv")
+
+
+```
+
+```{r}
+#Step 2 - Make an exploratory scatterplot 
+
+salmon_plot <- ggplot(salmon, aes(x = year, y = salmon_fresh)) +
+  geom_point()
+
+salmon_plot
+
+## Overall, the exploratory scatterplot suggests that the relationship between year and salmon imports is linear. I have some hesitation due to the kinks in the line in 2004-2005 and 2013-2014. 
+
+```
+
+```{r}
+
+#Step 3 - Linear Regression in R
+
+salmon_model <- lm(salmon_fresh ~ year, data = salmon)
+
+salmon_model
+
+#Write out model equation based on findings: 
+# Based on y = β0 + β1x + (error term)
+
+
+#Imports(tons) = -14982940 + 7550(Year)
+#Slope means rate at which salmon imports increase per year 
+#Y-intercept implies that there will be negative salmon caught in year "0" - this is nonscensical and implies that the model should NOT be used to extrapolate past values 
+
+
+```
+
+```{r}
+#Step 4 - Model diagnostics 
+
+
+par(mfrow = c(2,2)) #to view all four disgnostic plots at once
+plot(salmon_model) #to view model diagnostics
+
+#Do residuals appear normally distributed? 
+#Yes, the residuals appear normally distributed 
+
+#Any concerns about heteroscedasticity or outliers? 
+#No, the spread of the residuals about the models remains relatively even over 'x'. (Where do I look for outliers?)
+
+
+```
+
+
