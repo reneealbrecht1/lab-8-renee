@@ -65,4 +65,87 @@ plot(salmon_model) #to view model diagnostics
 
 ```
 
+```{r}
+#Step 5 - Explore model fit and significance 
+
+summary(salmon_model) #see detailed model information, including model fit information and statistics
+
+#Does year significantly predict salmon imports? 
+#Yes, 95% of variance in salmon imports is predictable by year 
+
+#What does the R-squared value actually mean in words?
+#In this model, R-squared tells us the proportion of variance in salmon imports that is explained by the value of the corresponding year. 
+
+#What proportion of the variance in salmon imports is NOT explained by year?
+#Approximately 5% of salmon imports is NOT explained by year 
+
+
+```
+
+```{r}
+#Step 6 - Prepare a final graph 
+
+salmon_final_graph <- ggplot(salmon, aes(x = year, y = salmon_fresh)) +
+geom_point() +
+geom_smooth(method = lm, se = TRUE, size = 0.5, color = "gray20") +
+theme_bw() +
+scale_x_continuous(expand = c(0,0), limits = c(1990, 2017)) +
+labs(x = "Year", y = "U.S. Annual Fresh Salmon Imports\n(1,000 pounds)")
+
+salmon_final_graph
+
+#geom_smooth adds regression line to scatter plot, "se : logical value. If TRUE, confidence interval is displayed around smooth." "
+
+
+```
+
+```{r}
+#Step 7 - Make predictions using the model 
+
+#Option 1 (not recommended): Plug each of those years into the model equation separately to calculate the expected U.S. imports.
+#Option 2 (recommended): Create a data frame containing the ‘new values’ that you want to make predictions for, feed that into the predict() function
+
+#Let's do option 2 - create new data frame called 'new_years'
+
+new_years <- data.frame(year = c(2022, 2024, 2026, 2028))
+new_years
+
+#Next, feed data fram into predict() function, letting it know which model to use to make predictions for new values 
+
+#Include 'interval = "confidence"' to also report the lower and upper bounds of the 95% CI for model fit at each year 
+
+future_predict <- predict(salmon_model, new_data = new_years, interval = "confidence")
+future_predict
+
+predictions <- data.frame(new_years, future_predict)
+predictions
+
+
+
+
+```
+
+
+```{r}
+#Step 8 - Find Pearson's r (correlation)
+
+salmon_pr <- cor.test(salmon$year, salmon$salmon_fresh)
+salmon_pr
+
+# Based on the Pearson's R (0.973587), I would describe this as a strong positive correlation. 
+
+```
+
+```{r}
+#Step 9 - Write a concluding statement about the relationship 
+
+#“Year significantly predicts salmon imports (b = 0.79, t(26) = 21.723, p < 0.001) with a strong positive correlation between the two (Pearson’s r = 0.97). The overall model (Imports(tons) = -14982940 + 7550(Year)?) explains a significant amount of variance in sepal width (F(1,26) = 471.9, p < 0.001, R2 = 0.95).”
+
+
+```
+
+
+
+
+
 
